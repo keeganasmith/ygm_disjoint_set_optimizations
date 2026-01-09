@@ -18,7 +18,7 @@
 #include <ygm/container/detail/base_iterators.hpp>
 #include <ygm/container/detail/base_misc.hpp>
 #include <ygm/container/detail/round_robin_partitioner.hpp>
-#include <ygm/random.hpp>
+#include <ygm/random/random.hpp>
 
 namespace ygm::container {
 
@@ -394,7 +394,7 @@ class bag : public detail::base_async_insert_value<bag<Item>, std::tuple<Item>>,
    * @brief Shuffle elements held locally with a default random number generator
    */
   void local_shuffle() {
-    ygm::default_random_engine<> r(m_comm, std::random_device()());
+    ygm::random::default_random_engine<> r(m_comm, std::random_device()());
     local_shuffle(r);
   }
 
@@ -425,7 +425,7 @@ class bag : public detail::base_async_insert_value<bag<Item>, std::tuple<Item>>,
    * generator
    */
   void global_shuffle() {
-    ygm::default_random_engine<> r(m_comm, std::random_device()());
+    ygm::random::default_random_engine<> r(m_comm, std::random_device()());
     global_shuffle(r);
   }
 

@@ -142,6 +142,7 @@ class disjoint_set_impl {
 
   disjoint_set_impl& operator=(const disjoint_set_impl& other){
     this->_copy(other);
+    return *this;
   }
 
   ~disjoint_set_impl() {

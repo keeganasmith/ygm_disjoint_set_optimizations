@@ -757,6 +757,10 @@ class disjoint_set_impl {
     this->m_is_compressed = other.m_is_compressed;
   }
 
+  ygm::comm& comm() const {
+    return this->m_comm;
+  }
+  
  protected:
   disjoint_set_impl() = delete;
 

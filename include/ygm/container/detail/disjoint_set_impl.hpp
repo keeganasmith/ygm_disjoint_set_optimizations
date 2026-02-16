@@ -722,6 +722,7 @@ class disjoint_set_impl {
   }
 
   ygm::comm &comm() { return m_comm; }
+  ygm::comm& comm() const { return m_comm; }
 
  private:
   const std::pair<value_type, rank_type> walk_cache(const value_type &item,

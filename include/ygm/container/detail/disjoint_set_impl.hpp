@@ -92,6 +92,10 @@ class disjoint_set_impl {
       }
     }
 
+    hash_cache(const hash_cash& other){
+      *this = other;
+    }
+
     void add_cache_entry(const value_type &item, const value_type &parent,
                          const rank_type parent_rank_est) {
       size_t index = std::hash<value_type>()(item) % m_cache_size;
@@ -132,7 +136,7 @@ class disjoint_set_impl {
     pthis.check(m_comm);
   }
 
-  disjoint_set_impl(const disjoint_set_impl& other){
+  disjoint_set_impl(const disjoint_set_impl& other): m_comm(other.comm), pthis(this), m_cache(other.m_cache) {
     this->_copy(other);
   }
 

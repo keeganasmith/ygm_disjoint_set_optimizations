@@ -751,7 +751,6 @@ class disjoint_set_impl {
   }
 
   void _copy(const disjoint_set_impl& other){
-    this->m_comm = other.comm();
     this->pthis = this;
     this->m_local_item_map = other.m_local_item_map;
     this->m_cache = other.m_cache;

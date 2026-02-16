@@ -24,6 +24,59 @@ int main(int argc, char** argv) {
                                             decltype(dset)::value_type> >);
   }
 
+  // Test copy constructor: equality + independence
+  {
+    ygm::container::disjoint_set<std::string> dset(world);
+
+    if (world.rank0()) {
+      dset.async_union("a", "a");
+      dset.async_union("b", "b");
+      dset.async_union("c", "c");
+      dset.async_union("d", "d");
+      dset.async_union("a", "b");
+      dset.async_union("c", "d");
+    }
+
+    world.barrier();
+
+    std::vector<std::string> keys = {"a","b","c","d"};
+
+    auto reps1 = dset.all_find(keys);
+
+    ygm::container::disjoint_set<std::string> cset(dset);
+
+    world.barrier();
+
+    auto reps2 = cset.all_find(keys);
+
+    YGM_ASSERT_RELEASE(dset.size() == cset.size());
+    YGM_ASSERT_RELEASE(dset.num_sets() == cset.num_sets());
+
+    // Same partition (pairwise connectivity)
+    for (auto &x : keys) {
+      for (auto &y : keys) {
+        YGM_ASSERT_RELEASE((reps1[x] == reps1[y]) == (reps2[x] == reps2[y]));
+      }
+    }
+
+    // Independence: mutate original only
+    if (world.rank0()) {
+      dset.async_union("b", "c");  // now {a,b,c,d} all connected in dset
+    }
+    world.barrier();
+
+    auto reps1_after = dset.all_find(keys);
+    auto reps2_after = cset.all_find(keys);
+
+    // dset should now have all connected
+    YGM_ASSERT_RELEASE(reps1_after["a"] == reps1_after["d"]);
+
+    // cset should remain as before: a connected to b, c connected to d, but (a not connected to c)
+    YGM_ASSERT_RELEASE(reps2_after["a"] == reps2_after["b"]);
+    YGM_ASSERT_RELEASE(reps2_after["c"] == reps2_after["d"]);
+    YGM_ASSERT_RELEASE(reps2_after["a"] != reps2_after["c"]);
+  }
+
   //
   // Test async_union from single rank
   {

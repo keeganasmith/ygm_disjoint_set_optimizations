@@ -132,6 +132,14 @@ class disjoint_set_impl {
     pthis.check(m_comm);
   }
 
+  disjoint_set_impl(const disjoint_set_impl& other){
+    this->_copy(other);
+  }
+
+  disjoint_set_impl& operator=(const disjoint_set_impl& other){
+    this->_copy(other);
+  }
+
   ~disjoint_set_impl() {
     m_comm.log(log_level::info, "Destroying ygm::container::disjoint_set");
     m_comm.barrier();
@@ -735,6 +743,14 @@ class disjoint_set_impl {
 
     return std::make_pair(prev_cache_entry->parent,
                           prev_cache_entry->parent_rank_est);
+  }
+
+  void _copy(const disjoint_set_impl& other){
+    this->m_comm = other.m_comm;
+    this->pthis = this;
+    this->m_local_item_map = other.m_local_item_map;
+    this->m_cache = other.m_cache;
+    this->m_is_compressed = other.m_is_compressed;
   }
 
  protected:

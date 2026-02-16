@@ -92,7 +92,7 @@ class disjoint_set_impl {
       }
     }
 
-    hash_cache(const hash_cash& other){
+    hash_cache(const hash_cache& other){
       *this = other;
     }
 
